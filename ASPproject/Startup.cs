@@ -29,6 +29,9 @@ namespace ASPproject
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(_configuration.GetConnectionString("ASPprojectProducts")));
 
+            services.AddMemoryCache();
+            services.AddSession();
+
 
         }
 
@@ -43,6 +46,7 @@ namespace ASPproject
             app.UseStaticFiles();
             app.UseRouting();
             app.UseStatusCodePages();
+            app.UseSession();
 
                 app.UseEndpoints(endpoints =>
                 {
