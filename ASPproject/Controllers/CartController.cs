@@ -3,8 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ASPproject.Infrastructure;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using ASPproject.Models.ViewModels;
 
 namespace ASPproject.Controllers
 {
@@ -16,6 +15,12 @@ namespace ASPproject.Controllers
         {
             _repository = repo;
         }
+
+        public ViewResult Index(string returnUrl)
+        {
+            return View(new CartIndexViewModel { Cart = GetCart(), ReturnUrl = returnUrl });
+        }
+
 
         public RedirectToActionResult AddToCart(int productID, string returnUrl)
         {
