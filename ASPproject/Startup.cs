@@ -29,8 +29,12 @@ namespace ASPproject
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(_configuration.GetConnectionString("ASPprojectProducts")));
 
+            services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddMemoryCache();
             services.AddSession();
+
 
 
         }

@@ -10,15 +10,17 @@ namespace ASPproject.Controllers
     public class CartController : Controller
     {
         private IProductRepository _repository;
+        private Cart _cart;
 
-        public CartController(IProductRepository repo)
+        public CartController(IProductRepository repo, Cart cartService)
         {
             _repository = repo;
+            _cart = cartService;
         }
 
         public ViewResult Index(string returnUrl)
         {
-            return View(new CartIndexViewModel { Cart = GetCart(), ReturnUrl = returnUrl });
+            return View(new CartIndexViewModel { Cart = _cart, ReturnUrl = returnUrl });
         }
 
 
@@ -27,9 +29,7 @@ namespace ASPproject.Controllers
             Product product = _repository.Products.FirstOrDefault(p => p.ProductID == productID);
             if(product != null)
             {
-                Cart cart = GetCart();
-                cart.AddItem(product, 1);
-                SaveCart(cart);
+                _cart.AddItem(product, 1);
             }
             return RedirectToAction("Index", new { returnUrl });
         }
@@ -39,21 +39,20 @@ namespace ASPproject.Controllers
             Product product = _repository.Products.FirstOrDefault(p => p.ProductID == productID);
             if(product != null)
             {
-                Cart cart = GetCart();
-                cart.RemoveItem(product);
-                SaveCart(cart);
+                _cart.RemoveItem(product);
+            
             }
             return RedirectToAction("Index", new { returnUrl });
         }
 
-        private void SaveCart(Cart cart)
-        {
-            HttpContext.Session.SetJson("Cart", cart);
-        }
-        private Cart GetCart()
-        {
-            var cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart() ;
-            return cart;
-        }
+        //private void SaveCart(Cart cart)
+        //{
+        //    HttpContext.Session.SetJson("Cart", cart);
+        //}
+        //private Cart GetCart()
+        //{
+        //    var cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart() ;
+        //    return cart;
+        //}
     }
 }
