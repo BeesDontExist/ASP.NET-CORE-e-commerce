@@ -26,6 +26,7 @@ namespace ASPproject
             services.AddControllersWithViews();
 
             services.AddTransient<IProductRepository, EFProductRepository>();
+            services.AddTransient<IOrderRepository, EFOrderRepository>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(_configuration.GetConnectionString("ASPprojectProducts")));
 
