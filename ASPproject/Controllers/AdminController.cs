@@ -31,13 +31,24 @@ namespace ASPproject.Controllers
             if (ModelState.IsValid)
             {
                 _repository.SaveProduct(product);
-                TempData["message"] = $"Saved: {product.Name}.";
+                TempData["message"] = $"Saved: {product.Name}";
                 return RedirectToAction("Index");
             }else
             {
                 //Failed validation
                 return View(product);
             }
+        }
+        public IActionResult Create() => View("Edit", new Product());
+        [HttpPost]
+        public IActionResult Delete(int productID)
+        {
+            Product deleteProduct = _repository.DeleteProduct(productID);
+            if (deleteProduct != null)
+            {
+                TempData["message"] = $"Deleted: {deleteProduct.Name}";
+            }
+            return RedirectToAction("Index");
         }
     }
 }
