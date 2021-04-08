@@ -26,8 +26,16 @@ namespace ASPproject
             services.AddControllersWithViews();
 
             services.AddTransient<IProductRepository, EFProductRepository>();
+            services.AddTransient<IOrderRepository, EFOrderRepository>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(_configuration.GetConnectionString("ASPprojectProducts")));
+
+            services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddMemoryCache();
+            services.AddSession();
+
 
 
         }
@@ -43,11 +51,27 @@ namespace ASPproject
             app.UseStaticFiles();
             app.UseRouting();
             app.UseStatusCodePages();
+            app.UseSession();
 
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapControllerRoute(name: "pagination", pattern: "Products/Page{productPage}", defaults: new { Controller = "Product", action = "List" });  
-                    endpoints.MapControllerRoute(name: "default", pattern: "{controller=Product}/{action=List}/{id?}"); 
+                    endpoints.MapControllerRoute(
+                        name: null,
+                        pattern: "{category}/Page{productPage:int}",
+                        defaults: new { controller = "Product", action = "List" });
+                    endpoints.MapControllerRoute(
+                        name: null, 
+                        pattern: "Page{productPage:int}", 
+                        defaults: new { Controller = "Product", action = "List", productPage = 1 });  
+                    endpoints.MapControllerRoute(
+                        name: null, 
+                        pattern: "{category}",
+                        defaults: new { Controller = "Product", action = "List", productPage = 1 });
+                    endpoints.MapControllerRoute(
+                        name: null,
+                        pattern: "",
+                        defaults: new { Controller = "Product", action = "List", productPage = 1 });
+                    endpoints.MapControllerRoute(name: null, pattern: "{controller}/{action}/{id?}");
                 });
 
             SeedData.EnsurePopulated(app);
